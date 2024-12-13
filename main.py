@@ -20,6 +20,7 @@ BITRIX_WEBHOOK_URL = f"{BASE_URL_API_BITRIX}/{PROFILE}/{CODIGO_BITRIX}"
 
 
 def validate_cpf(cpf):
+    time.sleep(3)
     cpf = re.sub(r'\D', '', cpf) 
     if len(cpf) != 11 or cpf in [str(i) * 11 for i in range(10)]:
         return False
@@ -32,6 +33,7 @@ def validate_cpf(cpf):
     return True
 
 def validate_cnpj(cnpj):
+    time.sleep(3)
     cnpj = re.sub(r'\D', '', cnpj)
     if len(cnpj) != 14 or cnpj in [str(i) * 14 for i in range(10)]:
         return False
@@ -50,6 +52,7 @@ def validate_cnpj(cnpj):
 
 
 def format_doc(number):
+    time.sleep(1)
     number = re.sub(r'\D', '', number)
     if len(number) == 11:
         return f'{number[:3]}.{number[3:6]}.{number[6:9]}-{number[9:]}'
@@ -72,6 +75,7 @@ def get_field_bitrix(deal_id, field):
 
 @app.route('/validate-doc/<int:deal_id>', methods=['POST'])
 def validate_doc(deal_id):
+    time.sleep(2)
     bitrix_field = 'UF_CRM_1697807353336'
     doc = get_field_bitrix(deal_id, bitrix_field)
     if not doc: 
@@ -101,10 +105,15 @@ def update_field(deal_id, field, value):
             field: value
         }
     }
-    response = requests.post(url_crm, json=payload)
-    if response.status_code != 200:
-        print(f"ERRO AO ATUALIZAR O CAMPO CPF/CNPJ: {response.text}")
-    return response.json()
+
+    try:
+        response = requests.post(url_crm, json=payload, timeout=10)
+        if response.status_code != 200:
+            print(f"ERRO AO ATUALIZAR O CAMPO CPF/CNPJ: {response.text}")
+        return response.json()
+    except requests.exceptions.Timeout:
+        print("Timeout exceeded when updating field in crm")
+        return None
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3449)
