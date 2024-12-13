@@ -112,7 +112,7 @@ def update_field(deal_id, field, value):
             print(f"ERRO AO ATUALIZAR O CAMPO CPF/CNPJ: {response.text}")
         return response.json()
     except requests.exceptions.Timeout:
-        print("Timeout exceeded when updating field in crm")
+        print("Timeout exceded when updating field in crm")
         return None
 
 if __name__ == '__main__':
