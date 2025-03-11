@@ -11,7 +11,6 @@ app = Flask(__name__)
 
 load_dotenv()
 CODIGO_BITRIX = os.getenv('CODIGO_BITRIX')
-CODIGO_BITRIX_STR = os.getenv('CODIGO_BITRIX_STR')
 PROFILE = os.getenv('PROFILE')
 BASE_URL_API_BITRIX = os.getenv('BASE_URL_API_BITRIX')
 
